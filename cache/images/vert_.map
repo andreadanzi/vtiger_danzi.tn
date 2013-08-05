@@ -1,0 +1,5 @@
+<img src="cache/images/vert_" border="0" usemap="#cache/images/vert_">
+<map name="cache/images/vert_">
+	<area shape="rect" coords="102,114,223,161" href="index.php?module=Accounts&action=ListView&from_homepagedb=true&type=dbrd&query=true&owner=Tecnico Demo&viewname=4" alt="Aziende=%d" title="Aziende=%d">
+	<area shape="rect" coords="360,114,481,161" href="index.php?module=Contacts&action=ListView&from_homepagedb=true&type=dbrd&query=true&owner=Tecnico Demo&viewname=7" alt="Contatti=%d" title="Contatti=%d">
+</map>
