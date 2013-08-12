@@ -1142,6 +1142,9 @@ function getSearchListViewEntries($focus, $module, $list_result, $navigation_arr
                     	}
 						elseif (isset($focus->popup_fields) && in_array($fieldname, $focus->popup_fields) && $_REQUEST['srcmodule'] == 'Relations' && $_REQUEST['forfield']=='link_to') {
                     		include("modules/Relations/CategoryToRelations.php");
+                    	}	
+						elseif (isset($focus->popup_fields) && in_array($fieldname, $focus->popup_fields) && $_REQUEST['srcmodule'] == 'Nonconformities' && $_REQUEST['forfield']=='product_id') {
+                    		include("modules/Nonconformities/CategoryToNonconformities.php");
                     	}						
 						// danzi.tn@20130812e
 						// vtlib customization: Generic popup handling

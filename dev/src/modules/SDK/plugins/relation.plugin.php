@@ -11,6 +11,10 @@ function relations_link_to($smarty,$srcmodule,$forfield) {
 	{
 		$smarty->assign("CUSTOM_JS","modules/Relations/CategoryFromRelations.js");
 	}
+	if($srcmodule == 'Nonconformities' && $forfield=='product_id')
+	{
+		$smarty->assign("CUSTOM_JS","modules/Nonconformities/CategoryToNonconformities.js");
+	}
 }
 
 

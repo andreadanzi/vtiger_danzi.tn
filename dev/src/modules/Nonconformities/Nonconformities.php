@@ -1,20 +1,20 @@
 <?php
-/*+***********************************************************************************
+/*+**********************************************************************************
  * The contents of this file are subject to the vtiger CRM Public License Version 1.0
  * ("License"); You may not use this file except in compliance with the License
  * The Original Code is:  vtiger CRM Open Source
  * The Initial Developer of the Original Code is vtiger.
  * Portions created by vtiger are Copyright (C) vtiger.
  * All Rights Reserved.
- *************************************************************************************/
+ ************************************************************************************/
 require_once('data/CRMEntity.php');
 require_once('data/Tracker.php');
 
-class Relations extends CRMEntity {
-var $db, $log; // Used in class functions of CRMEntity
+class Nonconformities extends CRMEntity {
+	var $db, $log; // Used in class functions of CRMEntity
 
 	var $table_name;
-	var $table_index= 'relationsid';
+	var $table_index = 'nonconformitiesid';
 	var $column_fields = Array();
 
 	/** Indicator if this is a custom module or standard module */
@@ -40,77 +40,73 @@ var $db, $log; // Used in class functions of CRMEntity
 	 */
 	var $list_fields = Array ();
 	var $list_fields_name = Array(
-		'Relation Name' => 'relation_name',
-		'Link To' => 'link_to',
-		'Relation State' => 'relation_state',
-		'Description' => 'description'
+		/* Format: Field Label => fieldname */
+		'Non Conformity Name'=> 'nonconformity_name',
+		'Created Time'=> 'createdtime',
+		'Assigned To' => 'assigned_user_id',
+		'Non Conformity State'=> 'nonconformity_state'
 	);
 
 	// Make the field link to detail view from list view (Fieldname)
-	var $list_link_field = 'relation_name';
+	var $list_link_field = 'nonconformity_name';
 
 	// For Popup listview and UI type support
 	var $search_fields = Array();
 	var $search_fields_name = Array(
 		/* Format: Field Label => fieldname */
-		'Relation Name'=> 'relation_name',
-		'Link To'=> 'link_to',
-		'Relation State'=> 'relation_state'
+		'Non Conformity Name'=> 'nonconformity_name'
 	);
 
 	// For Popup window record selection
-	var $popup_fields = Array('relation_name','link_to','relation_state');
+	var $popup_fields = Array('nonconformity_name');
 
 	// Placeholder for sort fields - All the fields will be initialized for Sorting through initSortFields
 	var $sortby_fields = Array();
 
 	// For Alphabetical search
-	var $def_basicsearch_col = 'relation_name';
+	var $def_basicsearch_col = 'nonconformity_name';
 
 	// Column value to use on detail view record text display
-	var $def_detailview_recname = 'relation_name';
+	var $def_detailview_recname = 'nonconformity_name';
 
 	// Required Information for enabling Import feature
-	var $required_fields = Array('relation_name'=>1);
+	var $required_fields = Array('nonconformity_name'=>1);
 
 	// Callback function list during Importing
 	var $special_functions = Array('set_import_assigned_user');
 
-	var $default_order_by = 'relation_name';
+	var $default_order_by = 'nonconformity_name';
 	var $default_sort_order='ASC';
 	// Used when enabling/disabling the mandatory fields for the module.
-	var $mandatory_fields = Array('createdtime', 'modifiedtime', 'relation_name');
+	// Refers to vte_field.fieldname values.
+	var $mandatory_fields = Array('createdtime', 'modifiedtime', 'nonconformity_name');
 	//crmv@10759
-	var $search_base_field = 'relation_name';
+	var $search_base_field = 'nonconformity_name';
 	//crmv@10759 e
 	
 	function __construct() {
 		global $log, $currentModule, $table_prefix;
-		$this->table_name = $table_prefix.'_relations';
-		$this->customFieldTable = Array($table_prefix.'_relationscf', 'relationsid');
+		$this->table_name = $table_prefix.'_nonconformities';
+		$this->customFieldTable = Array($table_prefix.'_nonconformitiescf', 'nonconformitiesid');
 		$this->entity_table = $table_prefix."_crmentity";
-		$this->tab_name = Array($table_prefix.'_crmentity', $table_prefix.'_relations', $table_prefix.'_relationscf');
+		$this->tab_name = Array($table_prefix.'_crmentity', $table_prefix.'_nonconformities', $table_prefix.'_nonconformitiescf');
 		$this->tab_name_index = Array(
 			$table_prefix.'_crmentity' => 'crmid',
-			$table_prefix.'_relations'   => 'relationsid',
-			$table_prefix.'_relationscf' => 'relationsid'
+			$table_prefix.'_nonconformities'   => 'nonconformitiesid',
+			$table_prefix.'_nonconformitiescf' => 'nonconformitiesid'
 		);
-		
 		$this->list_fields = Array(
-			'Relation Name'=>Array($table_prefix.'_relations'=>'relation_name'),
-			'Link To'=>Array($table_prefix.'_relations'=>'link_to'), 
-			'Relation State'=>Array($table_prefix.'_relations'=>'relation_state'), 
-			'Description'=>Array($table_prefix.'_crmentity'=>'description')
+			/* Format: Field Label => Array(tablename, columnname) */
+			// tablename should not have prefix 'vte_'
+			'Non Conformity Name'=> Array($table_prefix.'_nonconformities', 'nonconformity_name'),
+			'Created Time' => Array($table_prefix.'_crmentity','createdtime'),
+			'Assigned To' => Array($table_prefix.'_crmentity','smownerid'),
+			'Non Conformity State'=> Array($table_prefix.'_nonconformities', 'nonconformity_state')
 		);
 		$this->search_fields = Array(
 			/* Format: Field Label => Array(tablename, columnname) */
-			// tablename should not have prefix 'vtiger_'
-			'Relation Name'=> Array($table_prefix.'_relations', 'relation_name'),
-			//'Group Name' => Array($table_prefix.'_relations', 'group_name'),
-			//'Link From' => Array($table_prefix.'_relations', 'link_from'),
-			'Link To' => Array($table_prefix.'_relations', 'link_to'),
-			//'Relation Type' => Array($table_prefix.'_relations', 'relation_type'),
-			'Relation State' => Array($table_prefix.'_relations', 'relation_state')
+			// tablename should not have prefix 'vte_'
+			'Non Conformity Name'=> Array($table_prefix.'_nonconformities', 'nonconformity_name')
 		);
 		$this->column_fields = getColumnFields($currentModule);
 		$this->db = PearDatabase::getInstance();
@@ -162,6 +158,7 @@ var $db, $log; // Used in class functions of CRMEntity
 		$log->debug("Exiting getOrderBy method ...");
 		return $order_by;
 	}
+	
 
 	function save_module($module) {
 	}
@@ -427,6 +424,7 @@ var $db, $log; // Used in class functions of CRMEntity
 	 * You can override the behavior by re-defining it here.
 	 */
 	//function get_dependents_list($id, $cur_tab_id, $rel_tab_id, $actions=false) { }
+	
 	/** Returns a list of the associated tasks
 	 * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
 	 * All Rights Reserved..
@@ -542,76 +540,11 @@ var $db, $log; // Used in class functions of CRMEntity
 			AND vtiger_crmentity.deleted = 0";
 		//Don't add order by, because, for security, one more condition will be added with this query in include/RelatedListView.php
 		$log->debug("Exiting get_history method ...");
-		return getHistory('Relations',$query,$id);
+		return getHistory('Nonconformities',$query,$id);
 	}
 	
-	function getListQuery($module, $where='') {
-		global $current_user, $table_prefix, $log;
-		$log->debug("Entering Relations.getListQuery method ...");
-		$query = "SELECT ".$table_prefix."_crmentity.*, $this->table_name.*";
-
-		// Select Custom Field Table Columns if present
-		if(!empty($this->customFieldTable)) $query .= ", " . $this->customFieldTable[0] . ".* ";
-
-		$query .= " FROM $this->table_name";
-
-		$query .= "	INNER JOIN ".$table_prefix."_crmentity ON ".$table_prefix."_crmentity.crmid = $this->table_name.$this->table_index";
-
-		// Consider custom table join as well.
-		if(!empty($this->customFieldTable)) {
-			$query .= " INNER JOIN ".$this->customFieldTable[0]." ON ".$this->customFieldTable[0].'.'.$this->customFieldTable[1] .
-			" = $this->table_name.$this->table_index";
-		}
-		$query .= " LEFT JOIN ".$table_prefix."_users ON ".$table_prefix."_users.id = ".$table_prefix."_crmentity.smownerid";
-		$query .= " LEFT JOIN ".$table_prefix."_groups ON ".$table_prefix."_groups.groupid = ".$table_prefix."_crmentity.smownerid";
-
-		$linkedModulesQuery = $this->db->pquery("SELECT distinct fieldname, columnname, relmodule FROM ".$table_prefix."_field" .
-				" INNER JOIN ".$table_prefix."_fieldmodulerel ON ".$table_prefix."_fieldmodulerel.fieldid = ".$table_prefix."_field.fieldid" .
-				" WHERE uitype='10' AND ".$table_prefix."_fieldmodulerel.module=?", array($module));
-		$linkedFieldsCount = $this->db->num_rows($linkedModulesQuery);
-		$log->debug("Relations.getListQuery linkedModulesQuery=".$linkedModulesQuery);
-		for($i=0; $i<$linkedFieldsCount; $i++) {
-			$related_module = $this->db->query_result($linkedModulesQuery, $i, 'relmodule');
-			$fieldname = $this->db->query_result($linkedModulesQuery, $i, 'fieldname');
-			$columnname = $this->db->query_result($linkedModulesQuery, $i, 'columnname');
-
-			$other = CRMEntity::getInstance($related_module);
-			vtlib_setup_modulevars($related_module, $other);
-
-			$query .= " LEFT JOIN $other->table_name  AS {$other->table_name}{$i} ON {$other->table_name}{$i}.$other->table_index = $this->table_name.$columnname";
-
-			//crmv@26198e
-		}
-		$log->debug("Relations.getListQuery query = " .$query);
-		//crmv@31775
-	    $reportFilterJoin = '';
-		$viewId = $_SESSION['lvs'][$module]['viewname'];
-		if (isset($_REQUEST['viewname']) && $_REQUEST['viewname'] != '') {
-			$viewId = $_REQUEST['viewname'];
-		}
-		if ($viewId != '') {
-		    $oCustomView = new CustomView($module);
-			$reportFilter = $oCustomView->getReportFilter($viewId);
-			if ($reportFilter) {
-				$tableNameTmp = $oCustomView->getReportFilterTableName($reportFilter,$current_user->id);
-				$query .= " INNER JOIN $tableNameTmp ON $tableNameTmp.id = {$table_prefix}_crmentity.crmid";
-			}
-		}
-		//crmv@31775e
-		// crmv@30014
-		if (method_exists($this, 'getQueryExtraJoin')) {
-			$extraJoin = $this->getQueryExtraJoin();
-			$query .= " $extraJoin";
-		}
-		if (method_exists($this, 'getQueryExtraWhere')) {
-			$where .= " ".$this->getQueryExtraWhere();
-		}
-		// crmv@30014e
-		$query .= $this->getNonAdminAccessControlQuery($module,$current_user);
-		$query .= "	WHERE ".$table_prefix."_crmentity.deleted = 0 ".$where;
-		$query = $this->listQueryNonAdminChange($query, $module);
-		$log->debug("Exiting Relations.getListQuery method ...");
-		return $query;
-	}
+	
+	
+	
 }
 ?>
